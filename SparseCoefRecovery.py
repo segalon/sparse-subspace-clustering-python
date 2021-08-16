@@ -17,7 +17,7 @@ import cvxpy as cvx
 
 def SparseCoefRecovery(Xp, cst=0, Opt='Lasso', lmbda=0.001):
     D, N = Xp.shape
-    CMat = np.zeros([N, N])
+    CMat = np.zeros([N, N], dtype=np.float16)
     for i in range(0, N):
         y = Xp[:, i]
         if i == 0:
@@ -41,7 +41,7 @@ def SparseCoefRecovery(Xp, cst=0, Opt='Lasso', lmbda=0.001):
                 prob = cvx.Problem(obj, constraint)
                 prob.solve()
             elif Opt == 'L1Noise':
-                c = cvx.Variable(N - 1)
+                c = cvx.Variable(N - 1, '1')
                 obj = cvx.Minimize(cvx.norm(c, 1))
                 constraint = [(Y * c - y) <= lmbda, cvx.sum(c) == 1]
                 prob = cvx.Problem(obj, constraint)
